@@ -1,12 +1,23 @@
+import { useEffect, useState } from 'react'
 import { IconArrowRight, IconPuzzle, IconStar } from './Icons.jsx'
 import kuuhakusha from '../assets/kuuhakusha.webp'
+import subeteCard from '../assets/subete-card.png'
 import { to } from '../routing.js'
+import useReveal from '../useReveal.js'
 
 // ============================================================
 // 「白と黒」LP（トップページ）
 // パズル × 物語アドベンチャーの世界観を伝えるランディング。
 // 決済（チャージ）ページは #/charge に分離。
 // ============================================================
+
+// ヒーロー右側で時間ごとに切り替わる画像。
+// src/assets に画像を追加し、この配列に足すだけで枚数を増やせる。
+const HERO_IMAGES = [
+  { src: kuuhakusha, alt: '空白者' },
+  { src: subeteCard, alt: 'スベテ' },
+]
+const HERO_INTERVAL_MS = 5000
 
 const STEPS = [
   {
@@ -27,33 +38,72 @@ const STEPS = [
 ]
 
 export default function Landing() {
+  // スクロール連動のリビール演出を有効化。
+  useReveal()
+
+  // ヒーローのスライドショー：一定時間ごとに次の画像へ切り替える。
+  const [slide, setSlide] = useState(0)
+
+  useEffect(() => {
+    if (HERO_IMAGES.length < 2) return
+    const timer = setInterval(
+      () => setSlide((s) => (s + 1) % HERO_IMAGES.length),
+      HERO_INTERVAL_MS,
+    )
+    return () => clearInterval(timer)
+  }, [])
+
   return (
     <>
-      {/* ヒーロー */}
+      {/* ヒーロー：左にテキスト、右に写真スライドショー */}
       <section className="lp-hero" id="top">
-        <div
-          className="lp-hero__bg"
-          style={{ backgroundImage: `url(${kuuhakusha})` }}
-          aria-hidden="true"
-        />
-        <div className="lp-hero__scrim" aria-hidden="true" />
-        <div className="wrap lp-hero__inner">
-          <span className="lp-eyebrow">PUZZLE × STORY ADVENTURE</span>
-          <h1 className="lp-hero__title">白と黒</h1>
-          <p className="lp-hero__tagline">空白を、満たしていく物語。</p>
-          <p className="lp-hero__lead">
-            パズルの中に閉じ込められた存在――「空白者（くうはくしゃ）」。
-            <br />
-            その白い空白に触れられるのは、特別な力を持つあなただけ。
-          </p>
-          <div className="lp-cta-row">
-            <a className="lp-btn lp-btn--light" href="#story">
-              物語を知る
-              <IconArrowRight />
-            </a>
-            <a className="lp-btn lp-btn--outline" href={to('charge')}>
-              スベテをチャージ
-            </a>
+        <div className="wrap lp-hero__grid">
+          <div className="lp-hero__copy">
+            <span className="lp-eyebrow">PUZZLE × STORY ADVENTURE</span>
+            <h1 className="lp-hero__title">白と黒</h1>
+            <p className="lp-hero__tagline">空白を、満たしていく物語。</p>
+            <p className="lp-hero__lead">
+              パズルの中に閉じ込められた存在――「空白者（くうはくしゃ）」。
+              <br />
+              その白い空白に触れられるのは、特別な力を持つあなただけ。
+            </p>
+            <div className="lp-cta-row">
+              <a className="lp-btn lp-btn--light" href="#story">
+                物語を知る
+                <IconArrowRight />
+              </a>
+              <a className="lp-btn lp-btn--outline" href={to('charge')}>
+                スベテをチャージ
+              </a>
+            </div>
+          </div>
+
+          <div className="lp-hero__media">
+            {HERO_IMAGES.map((img, i) => (
+              <img
+                key={img.src}
+                src={img.src}
+                alt={img.alt}
+                className={
+                  'lp-hero__slide' + (i === slide ? ' is-active' : '')
+                }
+              />
+            ))}
+            {HERO_IMAGES.length > 1 && (
+              <div className="lp-hero__dots">
+                {HERO_IMAGES.map((img, i) => (
+                  <button
+                    key={img.src}
+                    type="button"
+                    className={
+                      'lp-hero__dot' + (i === slide ? ' is-active' : '')
+                    }
+                    onClick={() => setSlide(i)}
+                    aria-label={`${i + 1}枚目の画像を表示`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
         <a className="lp-scroll" href="#story" aria-label="下へスクロール">
@@ -64,13 +114,13 @@ export default function Landing() {
       {/* 世界観の導入 */}
       <section className="lp-world" id="story">
         <div className="wrap lp-narrow">
-          <p className="lp-kicker">― THE WORLD ―</p>
-          <p className="lp-lede">
+          <p className="lp-kicker" data-reveal="up">― THE WORLD ―</p>
+          <p className="lp-lede" data-reveal="wipe" data-reveal-delay="1">
             この世界には、
             <br />
             <em>パズルの中に閉じ込められた存在</em>がいる。
           </p>
-          <p className="lp-body">
+          <p className="lp-body" data-reveal="up" data-reveal-delay="3">
             彼らは「空白者（くうはくしゃ）」と呼ばれ、時間も、感情も、出口もない
             白い空白の中で、ただ静かに時を過ごしている。
           </p>
@@ -80,7 +130,7 @@ export default function Landing() {
       {/* 空白者とは */}
       <section className="lp-concept">
         <div className="wrap lp-concept__grid">
-          <figure className="lp-concept__media">
+          <figure className="lp-concept__media" data-reveal="left">
             <img src={kuuhakusha} alt="空白者" />
             <figcaption className="lp-concept__rating" aria-hidden="true">
               <IconStar size={18} />
@@ -91,17 +141,27 @@ export default function Landing() {
             </figcaption>
           </figure>
           <div className="lp-concept__text">
-            <p className="lp-kicker lp-kicker--ink">空白者 / KUUHAKUSHA</p>
-            <h2 className="lp-h2">
+            <p className="lp-kicker lp-kicker--ink" data-reveal="right">
+              空白者 / KUUHAKUSHA
+            </p>
+            <h2 className="lp-h2" data-reveal="right" data-reveal-delay="1">
               白い空白に
               <br />
               閉じ込められた者たち。
             </h2>
-            <p className="lp-body lp-body--ink">
+            <p
+              className="lp-body lp-body--ink"
+              data-reveal="right"
+              data-reveal-delay="2"
+            >
               その空白に触れられるのは、特別な能力を持つ者だけ。
               断片を繋ぎ、欠けた形を修復し、止まった時間に意味を与えられる者――。
             </p>
-            <p className="lp-body lp-body--ink">
+            <p
+              className="lp-body lp-body--ink"
+              data-reveal="right"
+              data-reveal-delay="3"
+            >
               そして、その人物は <strong>あなた</strong> だ。
             </p>
           </div>
@@ -111,11 +171,11 @@ export default function Landing() {
       {/* 救済者＝あなた */}
       <section className="lp-savior">
         <div className="wrap lp-narrow lp-center">
-          <span className="lp-eyebrow">そして――</span>
-          <h2 className="lp-savior__title">
+          <span className="lp-eyebrow" data-reveal="up">そして――</span>
+          <h2 className="lp-savior__title" data-reveal="pop" data-reveal-delay="1">
             その人物は、<span className="lp-accent">あなた</span>だ。
           </h2>
-          <p className="lp-body">
+          <p className="lp-body" data-reveal="up" data-reveal-delay="3">
             プレイヤーは “救済者” としてパズルの世界に入り、
             空白の中に閉じ込められた空白者と、まっすぐに向き合う。
           </p>
@@ -126,19 +186,26 @@ export default function Landing() {
       <section className="lp-loop" id="how">
         <div className="wrap">
           <div className="lp-section-head lp-center">
-            <span className="lp-loop__mark" aria-hidden="true">
+            <span className="lp-loop__mark" aria-hidden="true" data-reveal="pop">
               <IconPuzzle size={30} />
             </span>
-            <p className="lp-kicker lp-kicker--ink">HOW TO PLAY</p>
-            <h2 className="lp-h2">
+            <p className="lp-kicker lp-kicker--ink" data-reveal="up" data-reveal-delay="1">
+              HOW TO PLAY
+            </p>
+            <h2 className="lp-h2" data-reveal="wipe" data-reveal-delay="2">
               パズルを解くたび、
               <br />
               空白は満たされていく。
             </h2>
           </div>
           <ol className="lp-steps">
-            {STEPS.map(({ no, title, text }) => (
-              <li className="lp-step" key={no}>
+            {STEPS.map(({ no, title, text }, i) => (
+              <li
+                className="lp-step"
+                key={no}
+                data-reveal="pop"
+                data-reveal-delay={String(i * 2)}
+              >
                 <span className="lp-step__no">{no}</span>
                 <h3 className="lp-step__title">{title}</h3>
                 <p className="lp-step__text">{text}</p>
@@ -157,15 +224,19 @@ export default function Landing() {
         />
         <div className="lp-cta__scrim" aria-hidden="true" />
         <div className="wrap lp-narrow lp-center lp-cta__inner">
-          <h2 className="lp-cta__title">
+          <h2 className="lp-cta__title" data-reveal="up">
             やがてあなたは知ることになる。
             <br />
             彼らの、まだ見たことのない一面を。
           </h2>
-          <p className="lp-cta__sub">
+          <p className="lp-cta__sub" data-reveal="up" data-reveal-delay="2">
             救済の旅に必要なゲーム内通貨「スベテ」は、公式ストアでかんたんにチャージできます。
           </p>
-          <div className="lp-cta-row lp-cta-row--center">
+          <div
+            className="lp-cta-row lp-cta-row--center"
+            data-reveal="pop"
+            data-reveal-delay="3"
+          >
             <a className="lp-btn lp-btn--light" href={to('charge')}>
               スベテをチャージ
               <IconArrowRight />

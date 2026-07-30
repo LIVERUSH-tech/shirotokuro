@@ -21,6 +21,7 @@ export default function SiteFooter() {
         <div className="footer-col">
           <h4>サービス</h4>
           <a href={to('')}>トップ（物語）</a>
+          <a href={to('philosophy')}>私たちの思い</a>
           <a href={to('charge')}>スベテをチャージ</a>
           <a href={to('history')}>決済履歴</a>
           <a href={to('login')}>ログイン</a>

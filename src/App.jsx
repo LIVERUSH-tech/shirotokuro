@@ -6,6 +6,7 @@ import Home from './components/Home.jsx'
 import LoginPage from './components/LoginPage.jsx'
 import HistoryPage from './components/HistoryPage.jsx'
 import LegalPage from './components/LegalPage.jsx'
+import PhilosophyPage from './components/PhilosophyPage.jsx'
 import Tokushoho from './components/Tokushoho.jsx'
 import { TERMS, CHARGE_TERMS, PRIVACY } from './data/legal.js'
 import { BASE, currentRoute } from './routing.js'
@@ -95,6 +96,9 @@ export default function App() {
       break
     case 'history':
       content = <HistoryPage />
+      break
+    case 'philosophy':
+      content = <PhilosophyPage />
       break
     case 'terms':
       content = <LegalPage doc={TERMS} />
