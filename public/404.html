@@ -5,13 +5,14 @@
     <title>白と黒</title>
     <!--
       GitHub Pages 用 SPA リダイレクト（spa-github-pages 方式）。
-      存在しないパス（例 /shirotokuro/charge）に直接アクセス／リロードすると
-      GitHub はこの 404.html を返す。ここで一旦 /shirotokuro/?/charge へ
+      存在しないパス（例 /charge）に直接アクセス／リロードすると
+      GitHub はこの 404.html を返す。ここで一旦 /?/charge へ
       置き換え、index.html 側のスクリプトが元のパスへ復元する。
-      pathSegmentsToKeep = 1 はプロジェクトページ（/shirotokuro/）の階層数。
+      pathSegmentsToKeep = 0 は独自ドメイン（ルート直下）用。
+      プロジェクトページ（/shirotokuro/）に戻す場合は 1 にする。
     -->
     <script type="text/javascript">
-      var pathSegmentsToKeep = 1
+      var pathSegmentsToKeep = 0
       var l = window.location
       l.replace(
         l.protocol +
