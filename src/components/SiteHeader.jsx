@@ -1,4 +1,5 @@
 import subeteCard from '../assets/subete-card.png'
+import shirotokuroLogo from '../assets/shirotokuro-logo-black.png'
 import { to, navigate } from '../routing.js'
 import { isLoggedIn, logout } from '../auth.js'
 
@@ -18,7 +19,7 @@ export default function SiteHeader() {
           <span className="brand__mark">
             <img src={subeteCard} alt="" />
           </span>
-          <span className="brand__name">白と黒</span>
+          <img className="brand__logo" src={shirotokuroLogo} alt="白と黒" />
         </a>
 
         <div className="site-header__right">
