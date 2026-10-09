@@ -1,0 +1,8 @@
+# shirotokuro.com
+# ログイン後のページは検索対象外。Cloudflare 側の「managed robots.txt」が先頭に content-signal を付加する。
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /history
+
+Sitemap: https://shirotokuro.com/sitemap.xml
